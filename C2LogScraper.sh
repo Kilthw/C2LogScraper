@@ -6,6 +6,8 @@ if [[ $# == 0 ]] ; then
 Example: ./C2LogScraper.sh ~/share/Working/CS_Backups
 
 This script works best if run against full cobaltstrike folder backups and requires that the exported TSVs be somewhere under the supplied cobaltstrike backup directory.
+
+Note: This script currently doesn't like spaces in folder/file names.
     " | fold -sw 80
     exit 1
 fi
