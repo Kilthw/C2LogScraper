@@ -178,7 +178,7 @@ echo 'PERSISTENCE LOG'
 printf "%-15s %-15s %-20s %-70s %s\n" "Date/Time" "IP Address" "Host Name" "Log Line"
 divider=$(printf "%-109s" "-")
 echo "${divider// /-}"
-grep -ri "persist" $logs | grep -v "persistent=" | grep -v ".tsv\|\[input\]\|\[error\]\|.xml\|Tasked beacon to \|CsPersistentChatAdministrator\|powershell-import\|Install-\|Remove-\|releasenotes.txt\|downloads\|Binary file\| note " | while read -r a; do
+grep -ri "persist" $logs | grep -v "persistent=" | grep -v ".tsv\|\[input\]\|\[error\]\|.xml\|Tasked beacon to \|CsPersistentChatAdministrator\|powershell-import\|Install-\|Remove-\|releasenotes.txt\|downloads\|Persistent Routes:\|Binary file\| note " | while read -r a; do
 	ip=$(echo "$a" | cut -d":" -f1 | rev | cut -d"/" -f2 | rev)
 	sid=$(echo "$a" | cut -d":" -f1 | rev | cut -d"_" -f1 | rev | cut -d"." -f1)
 	cn=$(grep -ri "$sid" $logs | grep "sessions.tsv" | cut -d"	" -f6 | sort -u)
