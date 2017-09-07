@@ -24,7 +24,7 @@ echo "${divider// /-}"
 grep -ri "invoke-bloodhound" $logs | grep -i 'Tasked beacon to run' | while read -r a; do
 	ip=$(echo "$a" | cut -d":" -f1 | rev | cut -d"/" -f2 | rev)
 	sid=$(echo "$a" | cut -d":" -f1 | rev | cut -d"_" -f1 | rev | cut -d"." -f1)
-	cn=$(grep -ri "$sid" $logs | grep "sessions.tsv" | cut -d"	" -f6)
+	cn=$(grep -ri "$sid" $logs | grep "sessions.tsv" | cut -d"	" -f6 | sort -u)
 	logLine=$(echo "$a" | cut -d":" -f2-)
 	logFile=$(echo "$a" | cut -d":" -f1)
 	fileLoc=$(grep -iF "$logLine" $logFile -B10 -A10 | grep 'Writing output to CSVs in' | cut -d" " -f6)
@@ -88,7 +88,7 @@ done
 grep -ri "\[input\]" $logs | grep -P "(>.*>)" | grep -vi 'nul' | while read -r a; do
 	ip=$(echo "$a" | cut -d":" -f1 | rev | cut -d"/" -f2 | rev)
 	sid=$(echo "$a" | cut -d":" -f1 | rev | cut -d"_" -f1 | rev | cut -d"." -f1)
-	cn=$(grep -ri "$sid" $logs | grep "sessions.tsv" | cut -d"	" -f6)
+	cn=$(grep -ri "$sid" $logs | grep "sessions.tsv" | cut -d"	" -f6 | sort -u)
 	logLine=$(echo "$a" | cut -d":" -f2-)
 	fileLoc=$(echo "$a" | cut -d">" -f3-)
 	fileLoc=${fileLoc/ /}
@@ -110,7 +110,7 @@ done
 grep -ri 'Tasked beacon to upload' $logs | while read -r a; do
 	ip=$(echo "$a" | cut -d":" -f1 | rev | cut -d"/" -f2 | rev)
 	sid=$(echo "$a" | cut -d":" -f1 | rev | cut -d"_" -f1 | rev | cut -d"." -f1)
-	cn=$(grep -ri "$sid" $logs | grep "sessions.tsv" | cut -d"	" -f6)
+	cn=$(grep -ri "$sid" $logs | grep "sessions.tsv" | cut -d"	" -f6 | sort -u)
 	logLine=$(echo "$a" | cut -d":" -f2-)
 	fileLoc=$(echo "$a" | cut -d":" -f2- | cut -d" " -f10-)
 	backLoc=$fileLoc
@@ -142,7 +142,7 @@ echo "${divider// /-}"
 grep -ri "tasked beacon" $logs | grep -i "remove\|del\ " | grep -vP "([rR]emove.*[pP]ersist)" | while read -r a; do 
 	ip=$(echo "$a" | cut -d":" -f1 | rev | cut -d"/" -f2 | rev)
 	sid=$(echo "$a" | cut -d":" -f1 | rev | cut -d"_" -f1 | rev | cut -d"." -f1)
-	cn=$(grep -ri "$sid" $logs | grep "sessions.tsv" | cut -d"	" -f6)
+	cn=$(grep -ri "$sid" $logs | grep "sessions.tsv" | cut -d"	" -f6 | sort -u)
 	lower=$(echo "$a" | tr '[:upper:]' '[:lower:]')
 	if [[ $lower != *"del"* ]]; then
 		fileLoc=$(echo "$a" | cut -d":" -f2- | cut -d" " -f8-)
@@ -181,7 +181,7 @@ echo "${divider// /-}"
 grep -ri "persist" $logs | grep -v "persistent=" | grep -v ".tsv\|\[input\]\|\[error\]\|.xml\|Tasked beacon to \|CsPersistentChatAdministrator\|powershell-import\|Install-\|Remove-\|releasenotes.txt\|downloads\|Binary file\| note " | while read -r a; do
 	ip=$(echo "$a" | cut -d":" -f1 | rev | cut -d"/" -f2 | rev)
 	sid=$(echo "$a" | cut -d":" -f1 | rev | cut -d"_" -f1 | rev | cut -d"." -f1)
-	cn=$(grep -ri "$sid" $logs | grep "sessions.tsv" | cut -d"	" -f6)
+	cn=$(grep -ri "$sid" $logs | grep "sessions.tsv" | cut -d"	" -f6 | sort -u)
 	logLine=$(echo "$a" | cut -d":" -f2-)
 	#remove carriage return
 	logLine=${logLine//[$'\r\n']}
