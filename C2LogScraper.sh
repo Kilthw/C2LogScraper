@@ -17,12 +17,14 @@ echo '"CREATED/UPLOADED FILES"' > C2Report.csv
 #Created/Uploaded Files
 echo 'CREATED/UPLOADED FILES'
 echo '"IP Address"','"Created/Uploaded File"','"Log Line"' >> C2Report.csv
-printf "%-15s %-40s %-70s %s\n" "IP Address" "Created/Uploaded File" "Log Line"
+printf "%-15s %-20s %-40s %-70s %s\n" "IP Address" "Host Name" "Created/Uploaded File" "Log Line"
 divider=$(printf "%-145s" "-")
 echo "${divider// /-}"
 #Bloudhound Files
 grep -ri "invoke-bloodhound" $logs | grep -i 'Tasked beacon to run' | while read -r a; do
 	ip=$(echo "$a" | cut -d":" -f1 | rev | cut -d"/" -f2 | rev)
+	sid=$(echo "$a" | cut -d":" -f1 | rev | cut -d"_" -f1 | rev | cut -d"." -f1)
+	cn=$(grep -ri "$sid" $logs | grep "sessions.tsv" | cut -d"	" -f6)
 	logLine=$(echo "$a" | cut -d":" -f2-)
 	logFile=$(echo "$a" | cut -d":" -f1)
 	fileLoc=$(grep -iF "$logLine" $logFile -B10 -A10 | grep 'Writing output to CSVs in' | cut -d" " -f6)
@@ -66,25 +68,27 @@ grep -ri "invoke-bloodhound" $logs | grep -i 'Tasked beacon to run' | while read
 		t=true
 	fi
 	if [[ "$la" = true ]]; then
-		printf "%-15s %-40s %-70s %s\n" $ip $fileLoc'local_admins.csv' "$logLine"
-		echo "$ip",\"$fileLoc'local_admins.csv'\",\""$logLine"\" >> C2Report.csv
+		printf "%-15s %-20s %-40s %-70s %s\n" $ip "$cn" $fileLoc'local_admins.csv' "$logLine"
+		echo "$ip",\""$cn"\",\"$fileLoc'local_admins.csv'\",\""$logLine"\" >> C2Report.csv
 	fi
 	if [[ "$us" = true ]]; then
-		printf "%-15s %-40s %-70s %s\n" $ip $fileLoc'user_sessions.csv' "$logLine"
-		echo "$ip",\"$fileLoc'user_sessions.csv'\",\""$logLine"\" >> C2Report.csv
+		printf "%-15s %-20s %-40s %-70s %s\n" $ip "$cn" $fileLoc'user_sessions.csv' "$logLine"
+		echo "$ip",\""$cn"\",\"$fileLoc'user_sessions.csv'\",\""$logLine"\" >> C2Report.csv
 	fi
 	if [[ "$gm" = true ]]; then
-		printf "%-15s %-40s %-70s %s\n" $ip $fileLoc'group_memberships.csv' "$logLine"
-		echo "$ip",\"$fileLoc'group_memberships.csv'\",\""$logLine"\" >> C2Report.csv
+		printf "%-15s %-20s %-40s %-70s %s\n" $ip "$cn" $fileLoc'group_memberships.csv' "$logLine"
+		echo "$ip",\""$cn"\",\"$fileLoc'group_memberships.csv'\",\""$logLine"\" >> C2Report.csv
 	fi
 	if [[ "$t" = true ]]; then
-		printf "%-15s %-40s %-70s %s\n" $ip $fileLoc'trusts.csv' "$logLine"
-		echo "$ip",\"$fileLoc'trusts.csv'\",\""$logLine"\" >> C2Report.csv
+		printf "%-15s %-20s %-40s %-70s %s\n" $ip "$cn" $fileLoc'trusts.csv' "$logLine"
+		echo "$ip",\""$cn"\",\"$fileLoc'trusts.csv'\",\""$logLine"\" >> C2Report.csv
 	fi		
 done
 #Created files through output redirection
 grep -ri "\[input\]" $logs | grep -P "(>.*>)" | grep -vi 'nul' | while read -r a; do
 	ip=$(echo "$a" | cut -d":" -f1 | rev | cut -d"/" -f2 | rev)
+	sid=$(echo "$a" | cut -d":" -f1 | rev | cut -d"_" -f1 | rev | cut -d"." -f1)
+	cn=$(grep -ri "$sid" $logs | grep "sessions.tsv" | cut -d"	" -f6)
 	logLine=$(echo "$a" | cut -d":" -f2-)
 	fileLoc=$(echo "$a" | cut -d">" -f3-)
 	fileLoc=${fileLoc/ /}
@@ -99,12 +103,14 @@ grep -ri "\[input\]" $logs | grep -P "(>.*>)" | grep -vi 'nul' | while read -r a
 	if [[ $fileLoc != *"$backLoc"* ]]; then
 		fileLoc=$backLoc
 	fi
-	printf "%-15s %-40s %-70s %s\n" $ip $fileLoc "$logLine"
-	echo "$ip",\""$fileLoc"\",\""$logLine"\" >> C2Report.csv
+	printf "%-15s %-20s %-40s %-70s %s\n" $ip "$cn" "$fileLoc" "$logLine"
+	echo "$ip",\""$cn"\",\""$fileLoc"\",\""$logLine"\" >> C2Report.csv
 done
 #Uploaded files
 grep -ri 'Tasked beacon to upload' $logs | while read -r a; do
 	ip=$(echo "$a" | cut -d":" -f1 | rev | cut -d"/" -f2 | rev)
+	sid=$(echo "$a" | cut -d":" -f1 | rev | cut -d"_" -f1 | rev | cut -d"." -f1)
+	cn=$(grep -ri "$sid" $logs | grep "sessions.tsv" | cut -d"	" -f6)
 	logLine=$(echo "$a" | cut -d":" -f2-)
 	fileLoc=$(echo "$a" | cut -d":" -f2- | cut -d" " -f10-)
 	backLoc=$fileLoc
@@ -117,8 +123,8 @@ grep -ri 'Tasked beacon to upload' $logs | while read -r a; do
 	if [[ $fileLoc != *"$backLoc"* ]]; then
 		fileLoc=$backLoc
 	fi
-	printf "%-15s %-40s %-70s %s\n" $ip $fileLoc "$logLine"
-	echo "$ip",\""$fileLoc"\",\""$logLine"\" >> C2Report.csv
+	printf "%-15s %-20s %-40s %-70s %s\n" $ip "$cn" "$fileLoc" "$logLine"
+	echo "$ip",\""$cn"\",\""$fileLoc"\",\""$logLine"\" >> C2Report.csv
 done
 
 
@@ -130,11 +136,13 @@ echo '' >> C2Report.csv
 echo '"DELETED FILES"' >> C2Report.csv
 echo '"IP Address"','"Deleted File"','"Log Line"' >> C2Report.csv
 echo 'DELETED FILES'
-printf "%-15s %-40s %-70s %s\n" "IP Address" "Deleted File" "Log Line"
+printf "%-15s %-20s %-40s %-70s %s\n" "IP Address" "Host Name" "Deleted File" "Log Line"
 divider=$(printf "%-145s" "-")
 echo "${divider// /-}"
 grep -ri "tasked beacon" $logs | grep -i "remove\|del\ " | grep -vP "([rR]emove.*[pP]ersist)" | while read -r a; do 
 	ip=$(echo "$a" | cut -d":" -f1 | rev | cut -d"/" -f2 | rev)
+	sid=$(echo "$a" | cut -d":" -f1 | rev | cut -d"_" -f1 | rev | cut -d"." -f1)
+	cn=$(grep -ri "$sid" $logs | grep "sessions.tsv" | cut -d"	" -f6)
 	lower=$(echo "$a" | tr '[:upper:]' '[:lower:]')
 	if [[ $lower != *"del"* ]]; then
 		fileLoc=$(echo "$a" | cut -d":" -f2- | cut -d" " -f8-)
@@ -155,8 +163,8 @@ grep -ri "tasked beacon" $logs | grep -i "remove\|del\ " | grep -vP "([rR]emove.
 	#remove carriage return
 	fileLoc=${fileLoc//[$'\r\n']}
 	logLine=${logLine//[$'\r\n']}
-	printf "%-15s %-40s %-70s %s\n" $ip "$fileLoc" "$logLine"
-	echo "$ip",\""$fileLoc"\",\""$logLine"\" >> C2Report.csv
+	printf "%-15s %-20s %-40s %-70s %s\n" $ip "$cn" "$fileLoc" "$logLine"
+	echo "$ip",\""$cn"\",\""$fileLoc"\",\""$logLine"\" >> C2Report.csv
 done
 
 #Persistence Log
@@ -167,19 +175,21 @@ echo '' >> C2Report.csv
 echo '"PERSISTENCE LOG"' >> C2Report.csv
 echo '"Date/Time"','"IP Address"','"Log Line"' >> C2Report.csv
 echo 'PERSISTENCE LOG'
-printf "%-15s %-15s %-70s %s\n" "Date/Time" "IP Address" "Log Line"
+printf "%-15s %-15s %-20s %-70s %s\n" "Date/Time" "IP Address" "Host Name" "Log Line"
 divider=$(printf "%-109s" "-")
 echo "${divider// /-}"
 grep -ri "persist" $logs | grep -v "persistent=" | grep -v ".tsv\|\[input\]\|\[error\]\|.xml\|Tasked beacon to \|CsPersistentChatAdministrator\|powershell-import\|Install-\|Remove-\|releasenotes.txt\|downloads\|Binary file\| note " | while read -r a; do
 	ip=$(echo "$a" | cut -d":" -f1 | rev | cut -d"/" -f2 | rev)
+	sid=$(echo "$a" | cut -d":" -f1 | rev | cut -d"_" -f1 | rev | cut -d"." -f1)
+	cn=$(grep -ri "$sid" $logs | grep "sessions.tsv" | cut -d"	" -f6)
 	logLine=$(echo "$a" | cut -d":" -f2-)
 	#remove carriage return
 	logLine=${logLine//[$'\r\n']}
 	logFile=$(echo "$a" | cut -d":" -f1)
 	beaconCmd=$(grep -iF "$logLine" $logFile -B10 | grep -P "(> [pP]ower.*[pP]ersist)" | grep -vi 'import')
 	dateTime=$(echo "$beaconCmd" | cut -d" " -f1-2)
-	printf "%-15s %-15s %-70s %s\n" "$dateTime" $ip "$logLine"
-	echo \""$dateTime"\","$ip",\""$logLine"\" >> C2Report.csv
+	printf "%-15s %-15s %-20s %-70s %s\n" "$dateTime" "$ip" "$cn" "$logLine"
+	echo \""$dateTime"\","$ip",\""$cn"\",\""$logLine"\" >> C2Report.csv
 done
 
 #compromised Credentials Log
