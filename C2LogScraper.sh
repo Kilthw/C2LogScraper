@@ -262,8 +262,8 @@ beaconLog(){
 	done
 }
 
-#createdFiles
-#deletedFiles
+createdFiles
+deletedFiles
 persistenceLog
-#credentialsLog
-#beaconLog
+credentialsLog
+beaconLog
