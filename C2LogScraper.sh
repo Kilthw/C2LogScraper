@@ -21,7 +21,7 @@ createdFiles(){
 	echo "" >> C2Report.csv
 	echo '"CREATED/UPLOADED FILES"' >> C2Report.csv
 	echo 'CREATED/UPLOADED FILES'
-	echo '"IP Address"','"Created/Uploaded File"','"Log Line"' >> C2Report.csv
+	echo '"IP Address"','"Host Name"','"Created/Uploaded File"','"Log Line"' >> C2Report.csv
 	printf "%-15s %-20s %-40s %-70s %s\n" "IP Address" "Host Name" "Created/Uploaded File" "Log Line"
 	divider=$(printf "%-145s" "-")
 	echo "${divider// /-}"
@@ -140,7 +140,7 @@ deletedFiles(){
 	echo '' >> C2Report.csv
 	echo '' >> C2Report.csv
 	echo '"DELETED FILES"' >> C2Report.csv
-	echo '"IP Address"','"Deleted File"','"Log Line"' >> C2Report.csv
+	echo '"IP Address"','"Host Name"','"Deleted File"','"Log Line"' >> C2Report.csv
 	echo 'DELETED FILES'
 	printf "%-15s %-20s %-40s %-70s %s\n" "IP Address" "Host Name" "Deleted File" "Log Line"
 	divider=$(printf "%-145s" "-")
@@ -181,7 +181,7 @@ persistenceLog(){
 	echo '' >> C2Report.csv
 	echo '' >> C2Report.csv
 	echo '"PERSISTENCE LOG"' >> C2Report.csv
-	echo '"Date/Time"','"IP Address"','"Log Line"' >> C2Report.csv
+	echo '"Date/Time"','"IP Address"','"Host Name"','"Log Line"' >> C2Report.csv
 	echo 'PERSISTENCE LOG'
 	printf "%-15s %-15s %-20s %-70s %s\n" "Date/Time" "IP Address" "Host Name" "Log Line"
 	divider=$(printf "%-109s" "-")
@@ -209,8 +209,8 @@ persistenceLog(){
 	echo "Adding RegPersistence Uninstall Instructions to C2Report.csv"
 	echo "" >> C2Report.csv
 	echo "" >> C2Report.csv
-	echo "\# For those machines that the NCATS team was unable to remove RegPersistence:" >> C2Report.csv
-	echo "\# Execute the following PowerShell commands to remove the stored script and the registry autorun key." >> C2Report.csv
+	echo "# For those machines that the NCATS team was unable to remove RegPersistence:" >> C2Report.csv
+	echo "# Execute the following PowerShell commands to remove the stored script and the registry autorun key." >> C2Report.csv
 	echo "Remove-ItemProperty -Force -Path HKCU:Software\Microsoft\Windows -Name Debug;" >> C2Report.csv
 	echo "Remove-ItemProperty -Force -Path HKCU:Software\Microsoft\Windows\CurrentVersion\Run\ -Name Debug;" >> C2Report.csv
 	#fi
